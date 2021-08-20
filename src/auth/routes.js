@@ -9,12 +9,13 @@ const bearerAuth = require('./middleware/bearer.js')
 
 authRouter.post('/signup', async (req, res, next) => {
   try {
+    console.log("inside signup")
+    console.log("req.body.password :", req.body)
     let userRecord = await users.create(req.body);
     const output = {
       user: userRecord,
       token: userRecord.token
     };
-    console.log(output);
     res.status(200).json(output);
   } catch (e) {
     next(e.message);
@@ -23,20 +24,22 @@ authRouter.post('/signup', async (req, res, next) => {
 
 authRouter.post('/signin', basicAuth, (req, res, next) => {
   const user = {
-    user: request.user,
-    token: request.user.token
+    user: req.user,
+    token: req.user.token
   };
+  console.log("inside signin")
+  console.log("user",user);
   res.status(200).json(user);
 });
 
 authRouter.get('/users', bearerAuth, async (req, res, next) => {
-  const users = await Users.findAll({});
-  const list = users.map(user => user.username);
+  const Users = await users.findAll({});
+  const list = Users.map(user => user.username);
   res.status(200).json(list);
 });
 
 authRouter.get('/secret', bearerAuth, async (req, res, next) => {
-  res.status(200).send("Welcome to the secret area!")
+  res.status(200).send("Welcome to the secret area!");
 });
 
 
